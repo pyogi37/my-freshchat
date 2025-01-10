@@ -1,0 +1,73 @@
+/* styles.css */
+
+/* Global styles */
+body {
+  font-family: sans-serif;
+  margin: 0;
+}
+
+/* ConversationList */
+.conversation-list {
+  width: 300px;
+  padding: 20px;
+  border-right: 1px solid #ccc;
+}
+
+.conversation-item {
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.conversation-item:hover {
+  background-color: #f0f0f0;
+}
+
+.user-name {
+  font-weight: bold;
+}
+
+/* ConversationView */
+.conversation-view {
+  padding: 20px;
+  flex: 1; /* Make it take up the remaining space */
+}
+
+/* ChatWindow */
+.chat-window {
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 20px;
+}
+
+.chat-history {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.chat-bubble {
+  padding: 10px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+}
+
+.chat-bubble.company {
+  background-color: #e6e6e6; 
+}
+
+.chat-bubble.user {
+  background-color: #cfe2ff; 
+}
+
+.timestamp {
+  font-size: smaller;
+  color: #888;
+}
+
+/* ContactInfo */
+.contact-info {
+  margin-bottom: 20px;
+}
