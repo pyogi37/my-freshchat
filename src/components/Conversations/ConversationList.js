@@ -1,21 +1,27 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import ConversationItem from './ConversationItem'; 
-import { sampleConversations } from '../../sampleData'; 
+// src/components/Conversations/ConversationList.js
 
-const ConversationList = () => {
+import React from "react";
+import ConversationItem from "./ConversationItem";
+
+const ConversationList = ({ conversations, filter }) => { // Receive filter prop
+  console.log(conversations, "conversations");
+
+  let heading = "My Open Conversations"; // Default heading
+
+  if (filter === "all") {
+    heading = "All Conversations";
+  } else if (filter === "Resolved") {
+    heading = "Resolved Conversations";
+  } else if (filter === "Waiting on customer") {
+    heading = "Waiting on Customer";
+  } // No need to change for "Open" as it's the default
+
   return (
-    <div className="conversation-list">
-      <h2>My Open Conversations</h2>
-      <ul>
-        {sampleConversations.map((conversation) => (
-          <ConversationItem 
-            key={conversation.id} 
-            user={conversation.user} 
-            pageTitle={conversation.pageTitle} 
-            messagePreview={conversation.messagePreview} 
-            id={conversation.id} 
-          />
+    <div className="conversation-list-container p-4">
+      <h2 className="text-lg font-bold mb-4">{heading}</h2>
+      <ul className="space-y-2">
+        {conversations?.map((conversation) => (
+          <ConversationItem key={conversation.id} {...conversation} />
         ))}
       </ul>
     </div>

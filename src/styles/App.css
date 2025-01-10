@@ -1,6 +1,5 @@
-/* styles.css */
-
 /* Global styles */
+
 body {
   font-family: sans-serif;
   margin: 0;
@@ -31,8 +30,8 @@ body {
 
 /* ConversationView */
 .conversation-view {
-  padding: 20px;
   flex: 1; /* Make it take up the remaining space */
+  padding: 20px;
 }
 
 /* ChatWindow */
@@ -55,11 +54,11 @@ body {
 }
 
 .chat-bubble.company {
-  background-color: #e6e6e6; 
+  background-color: #e6e6e6;
 }
 
 .chat-bubble.user {
-  background-color: #cfe2ff; 
+  background-color: #cfe2ff;
 }
 
 .timestamp {
@@ -70,4 +69,51 @@ body {
 /* ContactInfo */
 .contact-info {
   margin-bottom: 20px;
+}
+
+.app-container {
+  display: grid;
+  grid-template-columns: 250px 300px 1fr; /* Adjust widths as needed */
+  height: 100vh;
+}
+
+.main-content {
+  display: flex; /* Use flexbox for conversation list and view */
+}
+
+.sidebar {
+  background-color: #f2f2f2; /* Or any color you prefer */
+  padding: 20px;
+  border-right: 1px solid #ccc;
+}
+
+.sidebar-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.sidebar-header img {
+  /* ... (Style company logo) ... */
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.navigation ul {
+  list-style: none;
+  padding: 0;
+}
+
+.navigation li {
+  margin-bottom: 10px;
+}
+
+.navigation a {
+  text-decoration: none;
+  color: #333; /* Or any color you prefer */
+}
+
+.navigation .active a {
+  font-weight: bold;
 }

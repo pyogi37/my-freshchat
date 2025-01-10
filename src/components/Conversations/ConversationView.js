@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import ChatWindow from './Chat/ChatWindow'; // Import the ChatWindow component
+import ChatWindow from '../Chat/ChatWindow'; // Import the ChatWindow component
 
 const ConversationView = () => {
   const { id } = useParams(); 
