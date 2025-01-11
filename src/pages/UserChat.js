@@ -1,18 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { collection, addDoc, serverTimestamp, onSnapshot, query, orderBy } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+  onSnapshot,
+  query,
+  orderBy,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import { db } from "../firebase";
 
-const UserChat = () => {
-  const [step, setStep] = useState("details"); // 'details' or 'chat'
-  const [userDetails, setUserDetails] = useState({
-    name: "",
-    phone: "",
-    email: "",
-  });
+const UserChat = ({ step, setStep,userDetails, setUserDetails }) => {
+ 
   const [message, setMessage] = useState(""); // Initial message for chat
   const [chatId, setChatId] = useState(null); // Chat document ID
   const [messages, setMessages] = useState([]); // Chat messages
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
 
   // Handle input changes for user details
   const handleDetailsChange = (e) => {
@@ -20,22 +25,49 @@ const UserChat = () => {
     setUserDetails((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Submit user details and start chat
+  // Submit user details and start or retrieve chat
   const handleDetailsSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    try {
-      // Create a new chat document in Firestore
-      const docRef = await addDoc(collection(db, "chats"), {
-        ...userDetails,
-        messages: [],
-        status: "Open",
-        createdAt: serverTimestamp(),
-      });
+    if (!userDetails.name || !userDetails.email || !userDetails.phone) {
+      alert("Please fill all the details.");
+      setIsSubmitting(false);
+      return;
+    }
 
-      setChatId(docRef.id); // Save chat document ID
-      setStep("chat"); // Move to chat screen
+    try {
+      const chatsQuery = query(
+        collection(db, "chats"),
+        where("email", "==", userDetails.email)
+      );
+      const chatSnapshot = await getDocs(chatsQuery);
+
+      if (!chatSnapshot.empty) {
+        const existingChat = chatSnapshot.docs[0];
+        setChatId(existingChat.id);
+        setStep("chat");
+      } else {
+        // Create a new chat document
+        const docRef = await addDoc(collection(db, "chats"), {
+          ...userDetails,
+          messages: [],
+          status: "Open",
+          createdAt: serverTimestamp(),
+        });
+
+        setChatId(docRef.id);
+
+        // Send the template message as the first message
+        const chatRef = collection(db, "chats", docRef.id, "messages");
+        await addDoc(chatRef, {
+          sender: "company",
+          text: "Hello there! Reach out to us right here, and we'll get back to you as soon as we can!",
+          timestamp: serverTimestamp(),
+        });
+
+        setStep("chat");
+      }
     } catch (error) {
       console.error("Error saving user details: ", error);
       alert("An error occurred. Please try again.");
@@ -89,10 +121,10 @@ const UserChat = () => {
   }, [chatId]);
 
   return (
-    <div className="user-chat-container p-4 max-w-lg mx-auto">
+    <div className="user-chat-container p-4 max-w-lg mx-auto bg-white rounded-lg shadow-md">
       {step === "details" && (
         <form onSubmit={handleDetailsSubmit} className="space-y-4">
-          <h2 className="text-xl font-bold">Enter Your Details</h2>
+          <h2 className="text-2xl font-semibold text-center">Enter Your Details</h2>
           <input
             type="text"
             name="name"
@@ -100,7 +132,7 @@ const UserChat = () => {
             value={userDetails.name}
             onChange={handleDetailsChange}
             required
-            className="w-full border border-gray-300 rounded-md px-3 py-2"
+            className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <input
             type="tel"
@@ -109,7 +141,7 @@ const UserChat = () => {
             value={userDetails.phone}
             onChange={handleDetailsChange}
             required
-            className="w-full border border-gray-300 rounded-md px-3 py-2"
+            className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <input
             type="email"
@@ -118,12 +150,12 @@ const UserChat = () => {
             value={userDetails.email}
             onChange={handleDetailsChange}
             required
-            className="w-full border border-gray-300 rounded-md px-3 py-2"
+            className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button
             type="submit"
             disabled={isSubmitting}
-            className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-700"
+            className="w-full py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
           >
             {isSubmitting ? "Submitting..." : "Start Chat"}
           </button>
@@ -132,15 +164,15 @@ const UserChat = () => {
 
       {step === "chat" && (
         <div className="chat-screen flex flex-col h-full">
-          <div className="chat-messages flex-1 overflow-y-auto border border-gray-300 p-4 rounded-md mb-4">
-            {messages.map((msg, index) => (
+          <div className="chat-messages flex-1 overflow-y-auto border border-gray-300 p-4 rounded-md mb-4 bg-gray-50">
+            {messages.map((msg) => (
               <div
-                key={index}
+                key={msg.id}
                 className={`message-bubble ${
                   msg.sender === "user"
                     ? "bg-blue-500 text-white ml-auto"
                     : "bg-gray-300 text-black mr-auto"
-                } px-4 py-2 rounded-lg mb-2`}
+                } px-4 py-2 rounded-lg mb-2 max-w-[70%]`}
               >
                 {msg.text}
               </div>
@@ -152,11 +184,11 @@ const UserChat = () => {
               value={message}
               onChange={handleMessageChange}
               placeholder="Type your message..."
-              className="flex-1 border border-gray-300 rounded-md px-3 py-2 mr-2"
+              className="flex-1 border border-gray-300 rounded-md px-4 py-2 mr-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
               type="submit"
-              className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-700"
+              className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               Send
             </button>

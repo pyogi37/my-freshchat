@@ -3,8 +3,13 @@ import { HiInbox, HiChatAlt2, HiUsers, HiLogout } from "react-icons/hi";
 import { Link } from "react-router-dom";
 import { auth } from "../../firebase";
 
-const Sidebar = ({ user }) => {
+const Sidebar = ({ user, setUser, resetChat }) => {
   const handleLogout = () => {
+    if (user.role == "company") {
+      setUser(null);
+      localStorage.removeItem("user");
+      return;
+    }
     auth.signOut();
   };
 
@@ -12,7 +17,7 @@ const Sidebar = ({ user }) => {
     <aside className="sidebar w-16 bg-gray-800 text-white flex flex-col items-center md:w-20">
       <div className="sidebar-header flex flex-col items-center p-4">
         <img
-          src="company-logo.png"
+          src="https://media.istockphoto.com/id/1201144331/vector/icon-design-element-logo-for-technology-innovation-company-tech-icon-and-symbol.jpg?s=612x612&w=0&k=20&c=Q-zPPtCY9aNohWqcUTB-rEBSd3xoC6fqSEgWDgulrf8="
           alt="Logo"
           className="w-10 h-10 rounded-full object-cover border-2 border-white"
         />
@@ -50,6 +55,7 @@ const Sidebar = ({ user }) => {
             <li className="group">
               <Link
                 to="/start-chat"
+                onClick={resetChat} 
                 className="flex items-center justify-center text-gray-300 hover:text-white"
               >
                 <HiChatAlt2 className="w-6 h-6" />

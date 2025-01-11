@@ -1,11 +1,10 @@
-import React from "react";
-import Inbox from "../pages/Inbox";
-import ConversationDetails from "../pages/ConversationDetails";
+import React, { useState, useEffect } from "react";
+import Inbox from "../components/Conversations/Inbox";
+import ConversationDetails from "../components/Conversations/ConversationDetails";
 import UserChat from "../pages/UserChat";
-import UserDetails from "../components/UserDetails";
 import { Routes, Route } from "react-router-dom";
 
-const Home = ({ user }) => {
+const Home = ({ user, step, setStep, userDetails, setUserDetails }) => {
   return (
     <main className="main-content flex-1 flex">
       {user?.role === "company" ? (
@@ -17,14 +16,20 @@ const Home = ({ user }) => {
             <Routes>
               <Route
                 path="/conversation/:id"
-                element={<ConversationDetails />}
+                element={<ConversationDetails user={user} />}
               />
             </Routes>
           </div>
         </>
       ) : (
         <div className="w-full flex flex-col items-center justify-center p-4 h-full">
-          <UserChat />
+          {/* Pass step and setStep to UserChat */}
+          <UserChat
+            step={step}
+            setStep={setStep}
+            userDetails={userDetails}
+            setUserDetails={setUserDetails}
+          />
         </div>
       )}
     </main>

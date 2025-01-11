@@ -1,36 +1,41 @@
 import React, { useState, useEffect } from "react";
-import ConversationList from "../components/Conversations/ConversationList";
-import { collection, query, where, getDocs } from "firebase/firestore";
-import { db } from "../firebase";
+import ConversationList from "./ConversationList";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { db } from "../../firebase";
 
 const Inbox = () => {
   const [filter, setFilter] = useState("all"); // State for filter
   const [conversations, setConversations] = useState([]); // State for conversations
 
   useEffect(() => {
-    const fetchConversations = async () => {
-      try {
-        const conversationsRef = collection(db, "conversations");
-        let q;
+    const fetchConversations = () => {
+      const conversationsRef = collection(db, "chats");
+      let q;
 
-        if (filter === "all") {
-          q = query(conversationsRef); // Fetch all conversations
-        } else {
-          q = query(conversationsRef, where("status", "==", filter)); // Filter conversations by status
-        }
+      // Apply filter based on status
+      if (filter === "all") {
+        q = query(conversationsRef); // Fetch all conversations
+      } else {
+        q = query(conversationsRef, where("status", "==", filter)); // Filter by status
+      }
 
-        const querySnapshot = await getDocs(q);
+      // Listen for real-time updates
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
         const fetchedConversations = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
         setConversations(fetchedConversations);
-      } catch (error) {
-        console.error("Error fetching conversations: ", error);
-      }
+      });
+
+      // Cleanup the subscription on component unmount
+      return unsubscribe;
     };
 
-    fetchConversations();
+    const unsubscribe = fetchConversations();
+
+    // Cleanup the listener when component unmounts or filter changes
+    return () => unsubscribe();
   }, [filter]); // Refetch whenever the filter changes
 
   return (

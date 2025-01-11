@@ -3,7 +3,8 @@
 import React from "react";
 import ConversationItem from "./ConversationItem";
 
-const ConversationList = ({ conversations, filter }) => { // Receive filter prop
+const ConversationList = ({ conversations, filter }) => {
+  // Receive filter prop
   console.log(conversations, "conversations");
 
   let heading = "My Open Conversations"; // Default heading
@@ -14,6 +15,8 @@ const ConversationList = ({ conversations, filter }) => { // Receive filter prop
     heading = "Resolved Conversations";
   } else if (filter === "Waiting on customer") {
     heading = "Waiting on Customer";
+  } else if (filter === "Waiting on internal team") {
+    heading = "Waiting on Internal Team";
   } // No need to change for "Open" as it's the default
 
   return (

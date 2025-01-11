@@ -1,19 +1,27 @@
 import React from "react";
+import { HiMail, HiPhone } from "react-icons/hi";
 
 const UserDetails = ({ user }) => {
   return (
-    <div className="user-details bg-white p-6 rounded-lg shadow-lg">
-      <h3 className="text-lg font-semibold text-gray-800 mb-4">Contact Info</h3>
+    <div className="user-details bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto">
+      <h3 className="text-lg font-semibold text-gray-800 mb-4">User Details</h3>
       {user ? (
         <div className="flex items-center space-x-4">
           <img
-            src={user.profilePicture || "/default-profile-picture.png"}
+            src="https://captiontools.com/wp-content/uploads/2017/03/testy3-1.png"
             alt="User Profile"
             className="w-16 h-16 rounded-full object-cover"
           />
           <div>
             <p className="text-lg font-bold text-gray-900">{user.name}</p>
-            <p className="text-sm text-gray-600">{user.email}</p>
+            <div className="flex items-center space-x-2 text-gray-600 mt-1">
+              <HiMail className="w-5 h-5 text-gray-500" />
+              <p className="text-sm">{user.email}</p>
+            </div>
+            <div className="flex items-center space-x-2 text-gray-600 mt-1">
+              <HiPhone className="w-5 h-5 text-gray-500" />
+              <p className="text-sm">{user.phone}</p>
+            </div>
           </div>
         </div>
       ) : (
